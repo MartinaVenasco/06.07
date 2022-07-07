@@ -2,7 +2,6 @@ const product = {
   id: 1,
   name: "TV",
   price: 40,
-  stock: 20,
   addons: {
     decoder: 10,
     qled: 40,
@@ -22,7 +21,7 @@ const newProducts = Array.from(
       id: 1,
       name: `TV - ${_}`,
       price: 40 + index,
-      stock: 21,
+      stock: index * 1,
     };
   }
 );
@@ -54,11 +53,14 @@ const shop = {
   renderHTML() {
     const productsHTML = this.getProducts()
       .map((product) => {
-        const { name, price } = product;
+        const { name, price, stock } = product;
         //
-        return `<li>${name} - ${price}€  <button class="product"> VEDI DETTAGLI </button></li>
-       
-        `;
+        return `<li class="product" 
+        data-alert="${name} solo ${stock} in magazzino a ${price}">
+<h3>${name}</h3> 
+${price}€ 
+<div>${stock} in magazzino</div>
+</li>`;
       })
       .join("");
     document.querySelector(".shop").innerHTML = `
@@ -88,27 +90,18 @@ $pagination.addEventListener("click", function (event) {
     const newPage = Number(buttonEl.innerText) - 1;
 
     shop.setPage(newPage);
-
-    
   }
 });
 
-const productContainer = document.querySelector(".shop");
-const prodB = document.querySelector(".product");
+const $shop = document.querySelector(".shop");
+$shop.addEventListener("click", function (event) {
+  console.log("click sul product!");
 
-productContainer.addEventListener("click", function (event) {
-  console.log("click su container prodotti");
-  event.stopPropagation();
+  const productEl = event.target.closest(".product");
 
-  if (event.target.tagName === "BUTTON") {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log("stai cliccando su un prodotto");
+  if (productEl) {
+    alert(productEl.dataset.alert);
 
-    alert(
-      `${product.price}€ Prezzo da urlo!     Affrettati ne rimangono solo: ${product.stock} pezzi`
-    );
+    return;
   }
 });
-
-
